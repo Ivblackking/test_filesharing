@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mysql:latest
+    container_name: filesharing_db
+    environment:
+      - MYSQL_DATABASE=${WEB_MYSQL_DB:?error missing WEB_MYSQL_DB env}
+      - MYSQL_USER=${WEB_MYSQL_USER:?error missing WEB_MYSQL_USER env}
+      - MYSQL_PASSWORD=${WEB_MYSQL_PASSWORD:?error missing WEB_MYSQL_PASSWORD env}
+      - MYSQL_ROOT_PASSWORD=${WEB_MYSQL_ROOT_PASSWORD:?error missing WEB_MYSQL_ROOT_PASSWORD env}
+      - MYSQL_TCP_PORT=${WEB_MYSQL_TCP_PORT:?error missing WEB_MYSQL_TCP_PORT env}
+    ports:
+      - ${WEB_MYSQL_TCP_PORT}:${WEB_MYSQL_TCP_PORT}
+    volumes:
+      - ./backend/mysqldata/:/var/lib/mysql
+    networks:
+      - web_net
+    restart: unless-stopped
+
+  webapp:
+    container_name: filesharing_webapp
+    build: ./backend/
+    env_file:
+      - ./backend/.env
+    command: >
+      sh -c "cd backend &&
+             uvicorn main:app --host 0.0.0.0 --port ${WEBAPP_PORT:?error missing WEBAPP_PORT env} --reload"
+    ports:
+      - ${WEBAPP_PORT}:${WEBAPP_PORT}
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    networks:
+      - web_net
+    restart: unless-stopped
+
+networks:
+  web_net:
+    driver: bridge
