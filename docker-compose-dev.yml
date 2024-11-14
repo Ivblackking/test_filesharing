@@ -1,7 +1,6 @@
 services:
-  db:
+  webdb:
     image: mysql:latest
-    container_name: filesharing_db
     environment:
       - MYSQL_DATABASE=${WEB_MYSQL_DB:?error missing WEB_MYSQL_DB env}
       - MYSQL_USER=${WEB_MYSQL_USER:?error missing WEB_MYSQL_USER env}
@@ -17,10 +16,9 @@ services:
     restart: unless-stopped
 
   webapp:
-    container_name: filesharing_webapp
     build: ./backend/
     env_file:
-      - ./backend/.env
+      - .env
     command: >
       sh -c "cd backend &&
              uvicorn main:app --host 0.0.0.0 --port ${WEBAPP_PORT:?error missing WEBAPP_PORT env} --reload"
@@ -29,7 +27,7 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - db
+      - webdb
     networks:
       - web_net
     restart: unless-stopped
