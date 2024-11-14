@@ -13,4 +13,4 @@ class SUserSignUp(SUserBase):
 
 
 class SMyFileBase(BaseModel):
-    filepath: str
+    filename: str

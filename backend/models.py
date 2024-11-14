@@ -17,7 +17,7 @@ class MyFile(Base):
     __tablename__ = "files"
 
     id = Column(Integer, primary_key=True, index=True)
-    filepath = Column(String(256))
+    filename = Column(String(256))
     users = relationship('User', secondary='users_files', back_populates='files')
 
 

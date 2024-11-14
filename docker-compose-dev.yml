@@ -1,6 +1,7 @@
 services:
   webdb:
     image: mysql:latest
+    container_name: webdb
     environment:
       - MYSQL_DATABASE=${WEB_MYSQL_DB:?error missing WEB_MYSQL_DB env}
       - MYSQL_USER=${WEB_MYSQL_USER:?error missing WEB_MYSQL_USER env}
@@ -17,6 +18,7 @@ services:
 
   webapp:
     build: ./backend/
+    container_name: webapp
     env_file:
       - .env
     command: >
