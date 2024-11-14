@@ -6,3 +6,4 @@ python-dotenv
 passlib
 cryptography
 bcrypt
+python-multipart
