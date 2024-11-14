@@ -1,12 +1,13 @@
 import os
 from fastapi import FastAPI, HTTPException, Depends, status, File, UploadFile
+from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 from sqlalchemy.orm import Session
 import models
 from models import User, MyFile
 from database import engine, SessionLocal
 from schemas import SUserBase, SUserSignUp, SMyFileBase
-from utils import get_hashed_password
+from utils import get_hashed_password, authenticate_user, create_access_token
 
 
 admin_key = os.environ.get("ADMIN_KEY")
@@ -51,6 +52,18 @@ async def signup(user: SUserSignUp, db: db_dependency):
     db.refresh(new_user)
 
     return {"message":"user created successfully"}
+
+
+@app.post("/login/")
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
+    user = authenticate_user(form_data.username, form_data.password, db)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Invalid username or password")
+    
+    acces_token = create_access_token(user.id, user.username, user.is_admin)
+
+    return {"access_token": acces_token, "token_type": "bearer" }
 
 
 @app.post("/files/upload/")
