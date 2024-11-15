@@ -2,3 +2,4 @@ venv
 .env
 mysqldata
 files_storage
+*.docx
