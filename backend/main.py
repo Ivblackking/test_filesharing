@@ -105,7 +105,7 @@ async def download_file(file_id: int, db: db_dependency, user: user_dependency):
         user_db = db.query(User).filter(User.id == user.user_id).first()
         if user_db not in file_to_download.users:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
-                                detail="You cannot download this file")
+                                detail="You don't have access to this file")
 
     file_path = f"files_storage/{file_to_download.filename}"
     file_to_download.downloads_counter += 1
