@@ -162,7 +162,7 @@ async def close_access_to_file(file_id: int, user_id: int, db: db_dependency, ad
 
 
 @app.delete("/files/{file_id}/delete/")
-async def delete_file(file_id, db: db_dependency, admin: admin_dependency):
+async def delete_file(file_id: int, db: db_dependency, admin: admin_dependency):
     file = db.query(MyFile).filter(MyFile.id == file_id).first()
     if file is None:
         raise HTTPException(
