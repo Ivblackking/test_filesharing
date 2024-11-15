@@ -92,7 +92,7 @@ async def upload_file(uploaded_file: UploadFile, db: db_dependency, admin: admin
     db.commit()
     db.refresh(new_file)
 
-    return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
+    return {"message": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
 
 
 @app.get("/files/{file_id}/download/")
@@ -114,3 +114,47 @@ async def download_file(file_id: int, db: db_dependency, user: user_dependency):
     db.refresh(file_to_download)
 
     return FileResponse(path=file_path, filename=file_to_download.filename, media_type='multipart/form-data')
+
+
+@app.get("/files/{file_id}/user/{user_id}/open-access")
+async def open_access_to_file(file_id: int, user_id: int, db: db_dependency, admin: admin_dependency):
+    file = db.query(MyFile).filter(MyFile.id == file_id).first()
+    if file is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    
+    if user in file.users:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="This user already has access to this file.")
+    
+    file.users.append(user)
+    db.commit()
+
+    return {"message": f"Access for user {user.username} to file {file.filename} has been opened successfully"}
+
+
+@app.get("/files/{file_id}/user/{user_id}/close-access")
+async def close_access_to_file(file_id: int, user_id: int, db: db_dependency, admin: admin_dependency):
+    file = db.query(MyFile).filter(MyFile.id == file_id).first()
+    if file is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    
+    if user not in file.users:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="This user does not have access to this file.")
+    
+    file.users.remove(user)
+    db.commit()
+
+    return {"message": f"Access for user {user.username} to file {file.filename} has been closed"}
