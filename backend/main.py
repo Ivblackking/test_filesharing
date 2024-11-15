@@ -7,10 +7,11 @@ import models
 from models import User, MyFile
 from database import engine, SessionLocal
 from schemas import SUserBase, SUserSignUp, SMyFileBase
-from utils import get_hashed_password, authenticate_user, create_access_token
+from utils import (get_hashed_password, authenticate_user, create_access_token, 
+                   get_current_user, get_admin_user)
 
 
-admin_key = os.environ.get("ADMIN_KEY")
+ADMIN_KEY = os.environ.get("ADMIN_KEY")
 
 
 app = FastAPI()
@@ -26,6 +27,8 @@ def get_db():
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
+user_dependency = Annotated[User, Depends(get_current_user)]
+admin_dependency = Annotated[User, Depends(get_admin_user)]
 
 
 @app.post("/signup/", status_code=status.HTTP_201_CREATED)
@@ -35,7 +38,7 @@ async def signup(user: SUserSignUp, db: db_dependency):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="This username already exists")
     
-    if user.is_admin and user.admin_key != admin_key:
+    if user.is_admin and user.admin_key != ADMIN_KEY:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Invalid admin key")
 
@@ -67,7 +70,7 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: 
 
 
 @app.post("/files/upload/")
-async def upload_file(uploaded_file: UploadFile, db: db_dependency):
+async def upload_file(uploaded_file: UploadFile, db: db_dependency, admin: admin_dependency):
     existing_file = db.query(MyFile).filter(MyFile.filename == uploaded_file.filename).first()
     if existing_file:
         raise HTTPException(

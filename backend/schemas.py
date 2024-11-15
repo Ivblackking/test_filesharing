@@ -12,5 +12,11 @@ class SUserSignUp(SUserBase):
     admin_key: Optional[str]
 
 
+class SUserPayload(BaseModel):
+    user_id: int
+    username: str
+    is_admin: bool
+
+
 class SMyFileBase(BaseModel):
     filename: str
