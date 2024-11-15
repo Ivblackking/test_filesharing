@@ -18,6 +18,7 @@ from utils import (get_hashed_password, authenticate_user, create_access_token,
 
 
 ADMIN_KEY = os.environ.get("ADMIN_KEY")
+FILES_STORAGE_PATH = "files_storage"
 
 
 app = FastAPI()
@@ -82,7 +83,7 @@ async def upload_file(uploaded_file: UploadFile, db: db_dependency, admin: admin
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="File with such name already exists")
     
-    file_location = f"files_storage/{uploaded_file.filename}"
+    file_location = f"{FILES_STORAGE_PATH}/{uploaded_file.filename}"
 
     with open(file_location, "wb+") as file_object:
         file_object.write(uploaded_file.file.read())
@@ -107,7 +108,7 @@ async def download_file(file_id: int, db: db_dependency, user: user_dependency):
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
                                 detail="You don't have access to this file")
 
-    file_path = f"files_storage/{file_to_download.filename}"
+    file_path = f"{FILES_STORAGE_PATH}/{file_to_download.filename}"
     file_to_download.downloads_counter += 1
     db.add(file_to_download)
     db.commit()
@@ -116,7 +117,7 @@ async def download_file(file_id: int, db: db_dependency, user: user_dependency):
     return FileResponse(path=file_path, filename=file_to_download.filename, media_type='multipart/form-data')
 
 
-@app.get("/files/{file_id}/user/{user_id}/open-access")
+@app.get("/files/{file_id}/user/{user_id}/open-access/")
 async def open_access_to_file(file_id: int, user_id: int, db: db_dependency, admin: admin_dependency):
     file = db.query(MyFile).filter(MyFile.id == file_id).first()
     if file is None:
@@ -138,7 +139,7 @@ async def open_access_to_file(file_id: int, user_id: int, db: db_dependency, adm
     return {"message": f"Access for user {user.username} to file {file.filename} has been opened successfully"}
 
 
-@app.get("/files/{file_id}/user/{user_id}/close-access")
+@app.get("/files/{file_id}/user/{user_id}/close-access/")
 async def close_access_to_file(file_id: int, user_id: int, db: db_dependency, admin: admin_dependency):
     file = db.query(MyFile).filter(MyFile.id == file_id).first()
     if file is None:
@@ -158,3 +159,22 @@ async def close_access_to_file(file_id: int, user_id: int, db: db_dependency, ad
     db.commit()
 
     return {"message": f"Access for user {user.username} to file {file.filename} has been closed"}
+
+
+@app.delete("/files/{file_id}/delete/")
+async def delete_file(file_id, db: db_dependency, admin: admin_dependency):
+    file = db.query(MyFile).filter(MyFile.id == file_id).first()
+    if file is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
+    
+    filename = file.filename
+    file_path = f"{FILES_STORAGE_PATH}/{filename}"
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    db.delete(file)
+    db.commit()
+
+    return {"message": f"File {filename} has been deleted successfully"}
