@@ -18,6 +18,7 @@ class MyFile(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     filename = Column(String(256))
+    downloads_counter = Column(Integer, default=0)
     users = relationship('User', secondary='users_files', back_populates='files')
 
 

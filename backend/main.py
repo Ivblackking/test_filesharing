@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 import models
 from models import User, MyFile
 from database import engine, SessionLocal
-from schemas import SUserBase, SUserSignUp, SMyFileBase
+from schemas import SUserSignUp
 from utils import (get_hashed_password, authenticate_user, create_access_token, 
                    get_current_user, get_admin_user)
 

@@ -17,6 +17,3 @@ class SUserPayload(BaseModel):
     username: str
     is_admin: bool
 
-
-class SMyFileBase(BaseModel):
-    filename: str
