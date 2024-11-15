@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI, HTTPException, Depends, status, File, UploadFile
+from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 from sqlalchemy.orm import Session
@@ -9,6 +10,11 @@ from database import engine, SessionLocal
 from schemas import SUserSignUp
 from utils import (get_hashed_password, authenticate_user, create_access_token, 
                    get_current_user, get_admin_user)
+# import logging
+
+
+# logger = logging.getLogger('uvicorn.error')
+# logger.setLevel(logging.DEBUG)
 
 
 ADMIN_KEY = os.environ.get("ADMIN_KEY")
@@ -87,3 +93,24 @@ async def upload_file(uploaded_file: UploadFile, db: db_dependency, admin: admin
     db.refresh(new_file)
 
     return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
+
+
+@app.get("/files/{file_id}/download/")
+async def download_file(file_id: int, db: db_dependency, user: user_dependency):
+    file_to_download = db.query(MyFile).filter(MyFile.id == file_id).first()
+    if file_to_download is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
+    
+    if not user.is_admin:
+        user_db = db.query(User).filter(User.id == user.user_id).first()
+        if user_db not in file_to_download.users:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
+                                detail="You cannot download this file")
+
+    file_path = f"files_storage/{file_to_download.filename}"
+    file_to_download.downloads_counter += 1
+    db.add(file_to_download)
+    db.commit()
+    db.refresh(file_to_download)
+
+    return FileResponse(path=file_path, filename=file_to_download.filename, media_type='multipart/form-data')
