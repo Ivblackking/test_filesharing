@@ -3,18 +3,18 @@ from fastapi import FastAPI, HTTPException, Depends, status, File, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, load_only
 import models
 from models import User, MyFile
 from database import engine, SessionLocal
 from schemas import SUserSignUp
 from utils import (get_hashed_password, authenticate_user, create_access_token, 
                    get_current_user, get_admin_user)
-# import logging
+import logging
 
 
-# logger = logging.getLogger('uvicorn.error')
-# logger.setLevel(logging.DEBUG)
+logger = logging.getLogger('uvicorn.error')
+logger.setLevel(logging.DEBUG)
 
 
 ADMIN_KEY = os.environ.get("ADMIN_KEY")
@@ -74,6 +74,12 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: 
     acces_token = create_access_token(user.id, user.username, user.is_admin)
 
     return {"access_token": acces_token, "token_type": "bearer" }
+
+
+@app.get("/users/")
+async def users_list(db: db_dependency, admin: admin_dependency):
+    users = db.query(User).options(load_only(User.id, User.username, User.is_admin)).all()
+    return {"users": users}
 
 
 @app.post("/files/upload/")
