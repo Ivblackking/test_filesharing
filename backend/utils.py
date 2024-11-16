@@ -88,3 +88,8 @@ def get_file_by_id(file_id: int, db):
     if file is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
     return file
+
+
+async def write_to_log_file(string: str):
+    with open("storage_logs.txt", "a") as log_file:
+        log_file.write(string+"\n")

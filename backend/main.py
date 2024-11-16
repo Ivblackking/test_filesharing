@@ -1,5 +1,7 @@
 import os
-from fastapi import FastAPI, HTTPException, Depends, status, File, UploadFile
+import logging
+from datetime import datetime
+from fastapi import FastAPI, HTTPException, Depends, status, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
@@ -9,8 +11,8 @@ from models import User, MyFile
 from database import engine, SessionLocal
 from schemas import SUserSignUp, SMyFileUser
 from utils import (get_hashed_password, authenticate_user, create_access_token, 
-                   get_current_user, get_admin_user, get_user_by_id, get_file_by_id)
-import logging
+                   get_current_user, get_admin_user, get_user_by_id, get_file_by_id,
+                   write_to_log_file)
 
 
 logger = logging.getLogger('uvicorn.error')
@@ -136,6 +138,9 @@ async def download_file(file_id: int, db: db_dependency, user: user_dependency):
     db.add(file_to_download)
     db.commit()
     db.refresh(file_to_download)
+
+    log_str = f"{user.username} - {file_to_download.filename} - {datetime.now()}"
+    await write_to_log_file(log_str)
 
     return FileResponse(path=file_path, filename=file_to_download.filename, media_type='multipart/form-data')
 

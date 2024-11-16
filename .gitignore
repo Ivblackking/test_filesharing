@@ -3,3 +3,4 @@ venv
 mysqldata
 files_storage
 *.docx
+storage_logs.txt
