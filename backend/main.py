@@ -9,7 +9,7 @@ from models import User, MyFile
 from database import engine, SessionLocal
 from schemas import SUserSignUp, SMyFileUser
 from utils import (get_hashed_password, authenticate_user, create_access_token, 
-                   get_current_user, get_admin_user)
+                   get_current_user, get_admin_user, get_user_by_id, get_file_by_id)
 import logging
 
 
@@ -84,17 +84,13 @@ async def users_list(db: db_dependency, admin: admin_dependency):
 
 @app.get("/users/{user_id}/files/")
 async def user_files_for_admin(user_id: int, db: db_dependency, admin: admin_dependency):
-    user = db.query(User).filter(User.id == user_id).first()
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    
+    user = get_user_by_id(user_id, db)
     return {"username": user.username, "files": user.files}
 
 
 @app.get("/user/my-files/")
 async def user_files(db: db_dependency, user: user_dependency):
-    user_db = db.query(User).filter(User.id == user.user_id).first()
+    user_db = get_user_by_id(user.user_id, db)
     user_files = [SMyFileUser(file_id=file.id, filename=file.filename) for file in user_db.files]
     return {"username": user_db.username, "files": user_files}
 
@@ -127,12 +123,10 @@ async def files_list(db: db_dependency, admin: admin_dependency):
 
 @app.get("/files/{file_id}/download/")
 async def download_file(file_id: int, db: db_dependency, user: user_dependency):
-    file_to_download = db.query(MyFile).filter(MyFile.id == file_id).first()
-    if file_to_download is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
+    file_to_download = get_file_by_id(file_id, db)
     
     if not user.is_admin:
-        user_db = db.query(User).filter(User.id == user.user_id).first()
+        user_db = get_user_by_id(user.user_id, db)
         if user_db not in file_to_download.users:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
                                 detail="You don't have access to this file")
@@ -148,15 +142,8 @@ async def download_file(file_id: int, db: db_dependency, user: user_dependency):
 
 @app.get("/files/{file_id}/user/{user_id}/open-access/")
 async def open_access_to_file(file_id: int, user_id: int, db: db_dependency, admin: admin_dependency):
-    file = db.query(MyFile).filter(MyFile.id == file_id).first()
-    if file is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
-
-    user = db.query(User).filter(User.id == user_id).first()
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    file = get_file_by_id(file_id, db)
+    user = get_user_by_id(user_id, db)
     
     if user in file.users:
         raise HTTPException(
@@ -170,15 +157,8 @@ async def open_access_to_file(file_id: int, user_id: int, db: db_dependency, adm
 
 @app.get("/files/{file_id}/user/{user_id}/close-access/")
 async def close_access_to_file(file_id: int, user_id: int, db: db_dependency, admin: admin_dependency):
-    file = db.query(MyFile).filter(MyFile.id == file_id).first()
-    if file is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
-
-    user = db.query(User).filter(User.id == user_id).first()
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    file = get_file_by_id(file_id, db)
+    user = get_user_by_id(user_id, db)
     
     if user not in file.users:
         raise HTTPException(
@@ -192,10 +172,7 @@ async def close_access_to_file(file_id: int, user_id: int, db: db_dependency, ad
 
 @app.delete("/files/{file_id}/delete/")
 async def delete_file(file_id: int, db: db_dependency, admin: admin_dependency):
-    file = db.query(MyFile).filter(MyFile.id == file_id).first()
-    if file is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
+    file = get_file_by_id(file_id, db)
     
     filename = file.filename
     file_path = f"{FILES_STORAGE_PATH}/{filename}"

@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from passlib.context import CryptContext
-from models import User
+from models import User, MyFile
 from schemas import SUserPayload
 
 
@@ -74,3 +74,17 @@ async def get_admin_user(admin_user: Annotated[User, Depends(get_current_user)])
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
                             detail="Your are not admin")
     return admin_user
+
+
+def get_user_by_id(user_id: int, db):
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    return user
+
+
+def get_file_by_id(file_id: int, db):
+    file = db.query(MyFile).filter(MyFile.id == file_id).first()
+    if file is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
+    return file
