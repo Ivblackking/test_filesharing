@@ -82,6 +82,16 @@ async def users_list(db: db_dependency, admin: admin_dependency):
     return {"users": users}
 
 
+@app.get("/users/{user_id}/files/")
+async def user_files_for_admin(user_id: int, db: db_dependency, admin: admin_dependency):
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    
+    return {"username": user.username, "files": user.files}
+
+
 @app.get("/user/my-files/")
 async def user_files(db: db_dependency, user: user_dependency):
     user_db = db.query(User).filter(User.id == user.user_id).first()
