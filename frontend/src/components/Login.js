@@ -23,6 +23,7 @@ function Login() {
                 }
             });
             // console.log(response);
+            setErrorMessage("");
             const token = response.data.access_token;
             localStorage.setItem("access_token", token);
         }catch(err) {
