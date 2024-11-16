@@ -45,7 +45,7 @@ services:
   #   ports:
   #     - ${REACTAPP_PORT}:${REACTAPP_PORT}
   #   volumes:
-  #     - .:/react-app
+  #     - .:/app
   #   depends_on:
   #     - webapp
   #   networks:
