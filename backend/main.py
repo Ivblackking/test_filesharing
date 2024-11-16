@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session, load_only
 import models
 from models import User, MyFile
 from database import engine, SessionLocal
-from schemas import SUserSignUp
+from schemas import SUserSignUp, SMyFileUser
 from utils import (get_hashed_password, authenticate_user, create_access_token, 
                    get_current_user, get_admin_user)
 import logging
@@ -80,6 +80,13 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: 
 async def users_list(db: db_dependency, admin: admin_dependency):
     users = db.query(User).options(load_only(User.id, User.username, User.is_admin)).all()
     return {"users": users}
+
+
+@app.get("/user/my-files/")
+async def user_files(db: db_dependency, user: user_dependency):
+    user_db = db.query(User).filter(User.id == user.user_id).first()
+    user_files = [SMyFileUser(file_id=file.id, filename=file.filename) for file in user_db.files]
+    return {"username": user_db.username, "files": user_files}
 
 
 @app.post("/files/upload/")

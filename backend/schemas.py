@@ -17,3 +17,7 @@ class SUserPayload(BaseModel):
     username: str
     is_admin: bool
 
+
+class SMyFileUser(BaseModel):
+    file_id: int
+    filename: str
