@@ -102,6 +102,12 @@ async def upload_file(uploaded_file: UploadFile, db: db_dependency, admin: admin
     return {"message": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
 
 
+@app.get("/files/")
+async def files_list(db: db_dependency, admin: admin_dependency):
+    files = db.query(MyFile).all()
+    return {"files": files}
+
+
 @app.get("/files/{file_id}/download/")
 async def download_file(file_id: int, db: db_dependency, user: user_dependency):
     file_to_download = db.query(MyFile).filter(MyFile.id == file_id).first()
