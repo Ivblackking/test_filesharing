@@ -33,6 +33,24 @@ services:
     networks:
       - web_net
     restart: unless-stopped
+  
+  reactapp:
+    build: ./frontend/
+    container_name: reactapp
+    env_file:
+      - .env
+    command: >
+      sh -c "cd frontend &&
+             npm start"
+    ports:
+      - ${REACTAPP_PORT}:${REACTAPP_PORT}
+    volumes:
+      - .:/react-app
+    depends_on:
+      - webapp
+    networks:
+      - web_net
+    restart: unless-stopped
 
 networks:
   web_net:
