@@ -2,6 +2,7 @@ import os
 import logging
 from datetime import datetime
 from fastapi import FastAPI, HTTPException, Depends, status, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
@@ -24,6 +25,19 @@ FILES_STORAGE_PATH = "files_storage"
 
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 models.Base.metadata.create_all(bind=engine)
 
 
