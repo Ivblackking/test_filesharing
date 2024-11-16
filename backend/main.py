@@ -12,7 +12,7 @@ from database import engine, SessionLocal
 from schemas import SUserSignUp, SMyFileUser
 from utils import (get_hashed_password, authenticate_user, create_access_token, 
                    get_current_user, get_admin_user, get_user_by_id, get_file_by_id,
-                   write_to_log_file)
+                   write_to_log_file, STORAGE_LOGS_FILENAME)
 
 
 logger = logging.getLogger('uvicorn.error')
@@ -189,3 +189,15 @@ async def delete_file(file_id: int, db: db_dependency, admin: admin_dependency):
     db.commit()
 
     return {"message": f"File {filename} has been deleted successfully"}
+
+
+@app.get("/storage-logs/download/")
+async def download_logs(admin: admin_dependency):
+    if not os.path.exists(STORAGE_LOGS_FILENAME):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Logs file not found")
+
+    return FileResponse(
+        path=STORAGE_LOGS_FILENAME,
+        filename=STORAGE_LOGS_FILENAME,
+        media_type='multipart/form-data'
+    )

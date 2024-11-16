@@ -11,6 +11,7 @@ from schemas import SUserPayload
 
 JWT_SECRET_KEY = os.environ.get("SECRET_KEY")
 JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM")
+STORAGE_LOGS_FILENAME = "storage_logs.txt"
 
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -91,5 +92,5 @@ def get_file_by_id(file_id: int, db):
 
 
 async def write_to_log_file(string: str):
-    with open("storage_logs.txt", "a") as log_file:
+    with open(STORAGE_LOGS_FILENAME, "a") as log_file:
         log_file.write(string+"\n")
