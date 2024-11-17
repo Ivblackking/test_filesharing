@@ -1,6 +1,7 @@
 import { BrowserRouter ,Routes, Route } from 'react-router-dom';
 import AuthLayout from "./components/AuthLayout";
 import Login from "./components/Login";
+import AllFiles from './components/AllFiles';
 
 function App() {
   return (
@@ -8,6 +9,9 @@ function App() {
       <Routes>
         <Route path="/auth/" element={<AuthLayout />}>
           <Route path="login" element={<Login />} />
+        </Route>
+        <Route path="/admin/">
+          <Route path="all-files" element={<AllFiles />} />
         </Route>
       </Routes>
     </BrowserRouter>
