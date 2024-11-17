@@ -5,6 +5,7 @@ import api from "../api";
 function AllFiles() {
     const [files, setFiles] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
+    const [fileToUpload, setFileToUpload] = useState(null);
 
     const fetchFiles = async () => {
         try{
@@ -24,14 +25,38 @@ function AllFiles() {
         }
     }
 
+    const handleFileInput = (e) => {
+        const file = e.target.files[0];
+        setFileToUpload(file);
+    }
+
+    const uploadFile = async (e) => {
+        e.preventDefault();
+        try {
+            const token = localStorage.getItem("access_token");
+            await api.post('/files/upload/', 
+                {"uploaded_file": fileToUpload}, {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                  'Authorization': `Bearer ${token}`
+                }
+            });
+            setErrorMessage("");
+            await fetchFiles();
+        }catch(err) {
+            // console.log(err);
+            setErrorMessage(err.response.data.detail)
+        }
+    }
+
     useEffect(() => {
         fetchFiles();
     }, []);
 
     return (
         <div className='container mt-3'>
-            {errorMessage ? <div className='alert alert-danger'>{errorMessage}</div> :
-            (files && <>
+            {errorMessage && <div className='alert alert-danger'>{errorMessage}</div>}
+            {files && <>
                 <h1 className='h2'>All Files</h1>
                 <table className="table table-striped">
                     <thead>
@@ -53,8 +78,13 @@ function AllFiles() {
                         })}
                     </tbody>
                 </table>
-            </>)
-            }
+            </>}
+            <form className='d-flex gap-2' onSubmit={uploadFile}>
+                <input className="form-control" type='file' id='file' name='file'
+                    onChange={handleFileInput} required
+                />
+                <button type='submit' className='btn btn-primary'>Upload</button>
+            </form>
         </div>
     )
 }
