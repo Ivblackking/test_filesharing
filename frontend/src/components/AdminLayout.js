@@ -1,6 +1,6 @@
 import { Outlet, Link } from "react-router-dom";
 
-const AuthLayout = () => {
+const AdminLayout = () => {
   return (
     <>
       <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
@@ -11,7 +11,10 @@ const AuthLayout = () => {
           </button>
           <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-              <Link to="/auth/login" className="nav-link active">Login</Link>
+              <Link to="/admin/all-files" className="nav-link active">Storage</Link>
+            </div>
+            <div class="navbar-nav">
+              <Link to="/admin/all-users" className="nav-link active">Users</Link>
             </div>
           </div>
         </div>
@@ -22,4 +25,4 @@ const AuthLayout = () => {
   )
 };
 
-export default AuthLayout;
+export default AdminLayout;
