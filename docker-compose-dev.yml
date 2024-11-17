@@ -12,6 +12,11 @@ services:
       - ${WEB_MYSQL_TCP_PORT}:${WEB_MYSQL_TCP_PORT}
     volumes:
       - ./backend/mysqldata/:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u ${WEB_MYSQL_USER} --password=${WEB_MYSQL_PASSWORD}
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - web_net
     restart: unless-stopped
@@ -29,7 +34,8 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - webdb
+      webdb:
+        condition: service_healthy
     networks:
       - web_net
     restart: unless-stopped
