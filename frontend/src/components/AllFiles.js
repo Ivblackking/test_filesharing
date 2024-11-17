@@ -3,7 +3,7 @@ import {useState, useEffect} from 'react'
 import api from "../api";
 
 function AllFiles() {
-    const [files, setFiles] = useState([]);
+    const [files, setFiles] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
 
     const fetchFiles = async () => {
@@ -31,7 +31,7 @@ function AllFiles() {
     return (
         <div className='container mt-3'>
             {errorMessage ? <div className='alert alert-danger'>{errorMessage}</div> :
-            (files.length && <>
+            (files && <>
                 <h1 className='h2'>All Files</h1>
                 <table className="table table-striped">
                     <thead>
