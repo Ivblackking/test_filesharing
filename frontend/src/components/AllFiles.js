@@ -30,27 +30,31 @@ function AllFiles() {
 
     return (
         <div className='container mt-3'>
-            <h1 className='h2'>All Files</h1>
-            <table className="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">filename</th>
-                        <th scope="col">downloads</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {files.map((file, index) => {
-                        return (
-                            <tr key={file.id}>
-                                <th scope="row">{index+1}</th>
-                                <td>{file.filename}</td>
-                                <td>{file.downloads_counter}</td>
-                            </tr>
-                        )
-                    })}
-                </tbody>
-            </table>
+            {errorMessage ? <div className='alert alert-danger'>{errorMessage}</div> :
+            <>
+                <h1 className='h2'>All Files</h1>
+                <table className="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">filename</th>
+                            <th scope="col">downloads</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {files.map((file, index) => {
+                            return (
+                                <tr key={file.id}>
+                                    <th scope="row">{index+1}</th>
+                                    <td>{file.filename}</td>
+                                    <td>{file.downloads_counter}</td>
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </table>
+            </>
+            }
         </div>
     )
 }
