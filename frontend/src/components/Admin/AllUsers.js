@@ -1,8 +1,10 @@
 import React from 'react'
 import {useState, useEffect} from 'react'
-import api from "../api";
+import { useNavigate } from 'react-router-dom';
+import api from "./../../api";
 
 function AllUsers() {
+    const navigate = useNavigate();
     const [users, setUsers] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -20,6 +22,9 @@ function AllUsers() {
             setErrorMessage("");
         }catch(err) {
             // console.log(err);
+            if (err.response.status === 401){
+                navigate("/auth/login");
+            }
             setErrorMessage(err.response.data.detail)
         }
     }

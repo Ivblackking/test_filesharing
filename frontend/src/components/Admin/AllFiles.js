@@ -1,8 +1,10 @@
 import React from 'react'
 import {useState, useEffect} from 'react'
-import api from "../api";
+import api from "./../../api";
+import { useNavigate } from 'react-router-dom';
 
 function AllFiles() {
+    const navigate = useNavigate();
     const [files, setFiles] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
     const [fileToUpload, setFileToUpload] = useState(null);
@@ -21,6 +23,9 @@ function AllFiles() {
             setErrorMessage("");
         }catch(err) {
             // console.log(err);
+            if (err.response.status === 401){
+                navigate("/auth/login");
+            }
             setErrorMessage(err.response.data.detail)
         }
     }
