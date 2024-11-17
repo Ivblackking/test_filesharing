@@ -29,7 +29,7 @@ function AllFiles() {
     }, []);
 
     return (
-        <div>
+        <div className='container mt-3'>
             <h1 className='h2'>All Files</h1>
             <table className="table table-striped">
                 <thead>
