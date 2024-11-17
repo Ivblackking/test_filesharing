@@ -31,7 +31,7 @@ function AllFiles() {
     return (
         <div className='container mt-3'>
             {errorMessage ? <div className='alert alert-danger'>{errorMessage}</div> :
-            <>
+            (files.length && <>
                 <h1 className='h2'>All Files</h1>
                 <table className="table table-striped">
                     <thead>
@@ -53,7 +53,7 @@ function AllFiles() {
                         })}
                     </tbody>
                 </table>
-            </>
+            </>)
             }
         </div>
     )
