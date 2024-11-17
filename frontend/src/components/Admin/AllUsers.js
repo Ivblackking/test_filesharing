@@ -1,6 +1,6 @@
 import React from 'react'
 import {useState, useEffect} from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from "./../../api";
 
 function AllUsers() {
@@ -44,6 +44,7 @@ function AllUsers() {
                             <th scope="col">#</th>
                             <th scope="col">username</th>
                             <th scope="col">role</th>
+                            <th>files</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,6 +54,13 @@ function AllUsers() {
                                     <th scope="row">{index+1}</th>
                                     <td>{user.username}</td>
                                     <td>{user.is_admin ? "admin": "user"}</td>
+                                    <td>
+                                        <Link to="/admin/user-files" 
+                                            state={{ userId: user.id }}
+                                        >
+                                            view
+                                        </Link>
+                                    </td>
                                 </tr>
                             )
                         })}

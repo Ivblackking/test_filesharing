@@ -4,6 +4,7 @@ import Login from "./components/Auth/Login";
 import AllFiles from './components/Admin/AllFiles';
 import AllUsers from './components/Admin/AllUsers';
 import MyFiles from './components/UserSpace/MyFiles';
+import UserFiles from './components/Admin/UserFiles';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/admin/">
           <Route path="all-files" element={<AllFiles />} />
           <Route path="all-users" element={<AllUsers />} />
+          <Route path="user-files" element={<UserFiles />} />
         </Route>
         <Route path="/user-space/">
           <Route path="my-files" element={<MyFiles />} />
