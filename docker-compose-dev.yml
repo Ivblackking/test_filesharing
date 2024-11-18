@@ -28,6 +28,7 @@ services:
       - .env
     command: >
       sh -c "cd backend &&
+             mkdir files_storage &&
              uvicorn main:app --host 0.0.0.0 --port ${WEBAPP_PORT:?error missing WEBAPP_PORT env} --reload --log-level debug"
     ports:
       - ${WEBAPP_PORT}:${WEBAPP_PORT}

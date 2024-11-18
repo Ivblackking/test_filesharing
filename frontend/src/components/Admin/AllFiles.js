@@ -24,11 +24,13 @@ function AllFiles() {
             setFiles(response.data.files);
             setErrorMessage("");
         }catch(err) {
-            // console.log(err);
-            if (err.response.status === 401){
-                navigate("/auth/login");
+            console.log(err);
+            if (err.response){
+                if (err.response.status === 401){
+                    navigate("/auth/login");
+                }
+                setErrorMessage(err.response.data.detail)
             }
-            setErrorMessage(err.response.data.detail)
         }
     }
 
@@ -51,8 +53,10 @@ function AllFiles() {
             setErrorMessage("");
             await fetchFiles();
         }catch(err) {
-            // console.log(err);
-            setErrorMessage(err.response.data.detail)
+            console.log(err);
+            if (err.response){
+                setErrorMessage(err.response.data.detail);
+            }
         }
     }
 
