@@ -3,6 +3,7 @@ import {useState, useEffect} from 'react'
 import api from "./../../api";
 import { useNavigate } from 'react-router-dom';
 import RemoveFileBtn from './RemoveFileBtn';
+import DownloadFileBtn from '../DownloadFileBtn';
 
 function AllFiles() {
     const navigate = useNavigate();
@@ -71,6 +72,7 @@ function AllFiles() {
                             <th scope="col">filename</th>
                             <th scope="col">downloads</th>
                             <th></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -80,6 +82,13 @@ function AllFiles() {
                                     <th scope="row">{index+1}</th>
                                     <td>{file.filename}</td>
                                     <td>{file.downloads_counter}</td>
+                                    <td>
+                                        <DownloadFileBtn fileId={file.id}
+                                            fetchFiles={fetchFiles}
+                                            filename={file.filename}
+                                            setErrorMessage={setErrorMessage}
+                                        />
+                                    </td>
                                     <td>
                                         <RemoveFileBtn fileId={file.id}
                                             fetchFiles={fetchFiles}

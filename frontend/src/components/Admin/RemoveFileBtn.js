@@ -12,7 +12,7 @@ function RemoveFileBtn({fileId, fetchFiles, setErrorMessage}) {
                 }
             });
             // console.log(response);
-            fetchFiles();
+            await fetchFiles();
             setErrorMessage("");
         }catch(err) {
             // console.log(err);
