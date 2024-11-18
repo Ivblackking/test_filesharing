@@ -2,6 +2,7 @@ import React from 'react'
 import {useState, useEffect} from 'react'
 import api from "./../../api";
 import { useNavigate } from 'react-router-dom';
+import DownloadFileBtn from '../DownloadFileBtn';
 
 function MyFiles() {
     const navigate = useNavigate();
@@ -46,14 +47,21 @@ function MyFiles() {
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">filename</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {files.map((file, index) => {
                             return (
-                                <tr key={file.id}>
+                                <tr key={file.file_id}>
                                     <th scope="row">{index+1}</th>
                                     <td>{file.filename}</td>
+                                    <td>
+                                        <DownloadFileBtn fileId={file.file_id}
+                                            filename={file.filename}
+                                            setErrorMessage={setErrorMessage}
+                                        />
+                                    </td>
                                 </tr>
                             )
                         })}

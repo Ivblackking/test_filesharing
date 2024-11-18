@@ -1,7 +1,6 @@
-import React, { useState} from 'react'
 import api from '../api'
 
-function DownloadFileBtn({fileId, filename, setErrorMessage, fetchFiles}) {
+function DownloadFileBtn({fileId, filename, setErrorMessage}) {
     
     const handleDownload = async (e) => {
         try {
@@ -12,7 +11,7 @@ function DownloadFileBtn({fileId, filename, setErrorMessage, fetchFiles}) {
                   'Authorization': `Bearer ${token}`
                 }
             });
-            console.log(res);
+            // console.log(res);
             const blob = res.data;
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');

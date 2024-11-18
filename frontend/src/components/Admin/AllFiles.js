@@ -84,7 +84,6 @@ function AllFiles() {
                                     <td>{file.downloads_counter}</td>
                                     <td>
                                         <DownloadFileBtn fileId={file.id}
-                                            fetchFiles={fetchFiles}
                                             filename={file.filename}
                                             setErrorMessage={setErrorMessage}
                                         />
