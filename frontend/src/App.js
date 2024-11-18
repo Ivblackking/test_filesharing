@@ -7,6 +7,7 @@ import MyFiles from './components/UserSpace/MyFiles';
 import UserFiles from './components/Admin/UserFiles';
 import AdminLayout from './components/AdminLayout';
 import AdminHome from './components/Admin/AdminHome';
+import UserLayout from './components/UserLayout';
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
           <Route path="all-users" element={<AllUsers />} />
           <Route path="user-files" element={<UserFiles />} />
         </Route>
-        <Route path="/user-space/">
+        <Route path="/user-space/" element={<UserLayout />}>
           <Route path="my-files" element={<MyFiles />} />
         </Route>
       </Routes>
