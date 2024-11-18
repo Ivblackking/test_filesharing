@@ -1,13 +1,17 @@
 import { BrowserRouter ,Routes, Route } from 'react-router-dom';
+
 import AuthLayout from "./components/AuthLayout";
 import Login from "./components/Auth/Login";
-import AllFiles from './components/Admin/AllFiles';
-import AllUsers from './components/Admin/AllUsers';
-import MyFiles from './components/UserSpace/MyFiles';
-import UserFiles from './components/Admin/UserFiles';
+import SignUp from './components/Auth/SignUp';
+
 import AdminLayout from './components/AdminLayout';
 import AdminHome from './components/Admin/AdminHome';
+import AllFiles from './components/Admin/AllFiles';
+import AllUsers from './components/Admin/AllUsers';
+import UserFiles  from './components/Admin/UserFiles';
+
 import UserLayout from './components/UserLayout';
+import MyFiles from './components/UserSpace/MyFiles';
 
 function App() {
   return (
@@ -15,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/auth/" element={<AuthLayout />}>
           <Route path="login" element={<Login />} />
+          <Route path="signup" element={<SignUp />} />
         </Route>
         <Route path="/admin/" element={<AdminLayout />}>
           <Route path="" element={<AdminHome />} />

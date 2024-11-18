@@ -13,6 +13,9 @@ const AuthLayout = () => {
             <div className="navbar-nav">
               <Link to="/auth/login" className="nav-link active">Login</Link>
             </div>
+            <div className="navbar-nav">
+              <Link to="/auth/signup" className="nav-link active">Sign Up</Link>
+            </div>
           </div>
         </div>
       </nav>
