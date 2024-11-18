@@ -1,7 +1,10 @@
 import {React, useState} from 'react'
+import { jwtDecode} from 'jwt-decode';
 import api from "./../../api";
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
+    const navigate = useNavigate();
     const [loginData, setLoginData] = useState({
         username: "",
         password: "",
@@ -26,9 +29,18 @@ function Login() {
             setErrorMessage("");
             const token = response.data.access_token;
             localStorage.setItem("access_token", token);
+            const tokenPayload = jwtDecode(token);
+            // console.log(tokenPayload);
+            if (tokenPayload.is_admin){
+                navigate("/admin");
+            }else {
+                navigate("/user-space/my-files");
+            }
         }catch(err) {
             // console.log(err);
-            setErrorMessage(err.response.data.detail)
+            if (err.response){
+                setErrorMessage(err.response.data.detail);
+            }
         }
     }
 
