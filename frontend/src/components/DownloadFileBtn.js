@@ -21,7 +21,6 @@ function DownloadFileBtn({fileId, filename, setErrorMessage, fetchFiles}) {
             document.body.appendChild(a); // append the element to the dom
             a.click();
             a.remove(); // afterwards, remove the element
-            await fetchFiles();
             setErrorMessage("");
         }catch(err) {
             // console.log(err);
