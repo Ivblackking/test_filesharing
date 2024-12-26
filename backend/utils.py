@@ -70,7 +70,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         raise credentials_exception
 
 
-async def get_admin_user(admin_user: Annotated[User, Depends(get_current_user)]):
+async def get_admin_user(admin_user: Annotated[SUserPayload, Depends(get_current_user)]):
     if not admin_user.is_admin:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
                             detail="Your are not admin")

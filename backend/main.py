@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session, load_only
 import models
 from models import User, MyFile
 from database import engine, SessionLocal
-from schemas import SUserSignUp, SMyFileUser
+from schemas import SUserSignUp, SMyFileUser, SUserPayload
 from utils import (get_hashed_password, authenticate_user, create_access_token, 
                    get_current_user, get_admin_user, get_user_by_id, get_file_by_id,
                    write_to_log_file, STORAGE_LOGS_FILENAME)
@@ -50,8 +50,8 @@ def get_db():
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
-user_dependency = Annotated[User, Depends(get_current_user)]
-admin_dependency = Annotated[User, Depends(get_admin_user)]
+user_dependency = Annotated[SUserPayload, Depends(get_current_user)]
+admin_dependency = Annotated[SUserPayload, Depends(get_admin_user)]
 
 
 @app.post("/signup/", status_code=status.HTTP_201_CREATED)
